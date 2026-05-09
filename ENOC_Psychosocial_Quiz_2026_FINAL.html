@@ -1,0 +1,300 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>ENOC Safety Quiz 2026</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&family=Bebas+Neue&display=swap');
+*{margin:0;padding:0;box-sizing:border-box;}
+:root{--navy:#0d1e35;--navy2:#0a1525;--teal:#00b4b4;--teal2:#007d8a;--red:#e8192c;--green:#27ae60;}
+body{font-family:'Nunito',sans-serif;background:var(--navy2);color:#fff;min-height:100vh;}
+.hidden{display:none!important;}
+.btn{width:100%;padding:16px;border:none;border-radius:12px;font-family:'Nunito',sans-serif;font-size:1.05rem;font-weight:800;cursor:pointer;transition:all .2s;text-transform:uppercase;letter-spacing:.5px;}
+.btn-teal{background:var(--teal);color:#fff;}
+.btn-teal:active{background:var(--teal2);transform:scale(.98);}
+
+/* QR SCREEN */
+#screen-qr{display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:100vh;padding:30px 20px;text-align:center;}
+.badge{background:var(--teal);padding:8px 28px;border-radius:20px;font-size:.85rem;font-weight:800;letter-spacing:2px;margin-bottom:20px;}
+#screen-qr h1{font-family:'Bebas Neue',sans-serif;font-size:clamp(2.8rem,10vw,5rem);color:var(--teal);line-height:1;margin-bottom:6px;}
+#screen-qr h2{font-size:clamp(.95rem,3vw,1.3rem);color:rgba(255,255,255,.7);font-weight:600;margin-bottom:28px;}
+.qr-box{background:#fff;border-radius:16px;padding:14px;margin-bottom:16px;box-shadow:0 0 40px rgba(0,180,180,.3);}
+.qr-url{font-size:.78rem;color:rgba(255,255,255,.5);margin-bottom:14px;}
+.qr-big-text{font-size:1rem;color:#fff;font-weight:800;margin-bottom:4px;}
+.qr-sub{font-size:.85rem;color:rgba(255,255,255,.5);margin-bottom:20px;}
+.divider{width:100%;max-width:300px;border:none;border-top:1px solid rgba(255,255,255,.1);margin:16px 0;}
+
+/* NAME SCREEN */
+#screen-name{display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:100vh;padding:30px 20px;text-align:center;}
+.logo{font-family:'Bebas Neue',sans-serif;font-size:2.5rem;color:var(--teal);margin-bottom:6px;}
+#screen-name h2{font-size:1.3rem;font-weight:800;margin-bottom:6px;}
+#screen-name p{color:rgba(255,255,255,.6);font-size:.9rem;margin-bottom:32px;}
+.name-inp{width:100%;max-width:340px;padding:18px 20px;border:2px solid rgba(0,180,180,.4);border-radius:14px;background:rgba(255,255,255,.08);color:#fff;font-family:'Nunito',sans-serif;font-size:1.2rem;font-weight:700;text-align:center;outline:none;margin-bottom:16px;display:block;}
+.name-inp:focus{border-color:var(--teal);}
+.name-inp::placeholder{color:rgba(255,255,255,.3);}
+.name-btn{width:100%;max-width:340px;}
+
+/* QUESTION SCREEN */
+#screen-question{display:flex;flex-direction:column;align-items:center;min-height:100vh;padding:16px;}
+.q-header{width:100%;display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;}
+.q-progress{font-size:.85rem;color:rgba(255,255,255,.6);font-weight:700;}
+.q-timer{font-family:'Bebas Neue',sans-serif;font-size:2.2rem;width:56px;height:56px;border-radius:50%;display:flex;align-items:center;justify-content:center;background:rgba(0,180,180,.2);border:3px solid var(--teal);transition:all .3s;}
+.q-timer.urgent{background:rgba(232,25,44,.25);border-color:var(--red);color:var(--red);}
+.tbar-wrap{width:100%;height:7px;background:rgba(255,255,255,.1);border-radius:4px;margin-bottom:14px;}
+.tbar{height:7px;border-radius:4px;background:var(--teal);transition:width 1s linear;}
+.tbar.urgent{background:var(--red);}
+.score-strip{width:100%;background:rgba(0,180,180,.12);border:1px solid rgba(0,180,180,.3);border-radius:10px;padding:8px 16px;display:flex;justify-content:space-between;align-items:center;margin-bottom:14px;font-size:.9rem;font-weight:700;}
+.score-val{color:var(--teal);font-family:'Bebas Neue',sans-serif;font-size:1.4rem;}
+.q-num{font-size:.75rem;color:var(--teal);font-weight:800;letter-spacing:2px;margin-bottom:8px;text-align:center;width:100%;}
+.q-text{width:100%;background:rgba(255,255,255,.07);border-radius:14px;padding:18px;margin-bottom:16px;font-size:clamp(1rem,4vw,1.2rem);font-weight:800;line-height:1.5;text-align:center;min-height:90px;display:flex;align-items:center;justify-content:center;}
+.q-opts{width:100%;display:flex;flex-direction:column;gap:10px;}
+.q-opt{width:100%;padding:16px 18px;border-radius:12px;font-family:'Nunito',sans-serif;font-size:1rem;font-weight:800;border:2px solid transparent;cursor:pointer;text-align:left;display:flex;align-items:center;gap:12px;transition:all .15s;color:#fff;}
+.q-opt:active:not(:disabled){transform:scale(.97);}
+.q-opt.A{background:rgba(231,76,60,.22);border-color:rgba(231,76,60,.45);}
+.q-opt.B{background:rgba(52,152,219,.22);border-color:rgba(52,152,219,.45);}
+.q-opt.C{background:rgba(241,196,15,.22);border-color:rgba(241,196,15,.45);}
+.q-opt.D{background:rgba(46,204,113,.22);border-color:rgba(46,204,113,.45);}
+.q-opt:disabled{cursor:default;}
+.q-opt.correct{background:rgba(39,174,96,.45)!important;border-color:#27ae60!important;}
+.q-opt.wrong{opacity:.35;}
+.q-opt.my-wrong{background:rgba(232,25,44,.45)!important;border-color:var(--red)!important;opacity:1!important;}
+.opt-ltr{width:30px;height:30px;border-radius:7px;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:.85rem;font-weight:900;}
+.q-opt.A .opt-ltr{background:rgba(231,76,60,.55);}
+.q-opt.B .opt-ltr{background:rgba(52,152,219,.55);}
+.q-opt.C .opt-ltr{background:rgba(241,196,15,.55);}
+.q-opt.D .opt-ltr{background:rgba(46,204,113,.55);}
+.q-fb{margin-top:14px;padding:14px 16px;border-radius:10px;text-align:center;font-weight:700;font-size:.95rem;line-height:1.5;display:none;}
+.q-fb.ok{background:rgba(39,174,96,.2);border:1px solid #27ae60;display:block;}
+.q-fb.bad{background:rgba(232,25,44,.18);border:1px solid var(--red);display:block;}
+.q-hint{margin-top:10px;text-align:center;font-size:.82rem;color:rgba(255,255,255,.4);}
+
+/* RESULT SCREEN */
+#screen-result{display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:100vh;padding:24px 20px;text-align:center;}
+.res-trophy{font-size:5.5rem;margin-bottom:10px;animation:bounce 1.5s infinite;}
+@keyframes bounce{0%,100%{transform:translateY(0);}50%{transform:translateY(-14px);}}
+.res-name{font-size:1.1rem;color:rgba(255,255,255,.7);font-weight:700;margin-bottom:4px;}
+.res-label{font-family:'Bebas Neue',sans-serif;font-size:1.6rem;color:var(--teal);margin-bottom:2px;}
+.res-score{font-family:'Bebas Neue',sans-serif;font-size:6rem;color:#fff;line-height:1;margin:4px 0 16px;}
+.res-score span{font-size:2.2rem;color:rgba(255,255,255,.4);}
+.res-bar-wrap{width:100%;max-width:340px;height:14px;background:rgba(255,255,255,.1);border-radius:7px;margin-bottom:20px;overflow:hidden;}
+.res-bar{height:14px;border-radius:7px;background:var(--teal);transition:width 1.5s ease;}
+.res-msg{background:rgba(0,180,180,.12);border:1px solid rgba(0,180,180,.3);border-radius:14px;padding:18px 22px;max-width:340px;font-size:.95rem;color:rgba(255,255,255,.85);line-height:1.6;margin-bottom:20px;}
+.res-breakdown{width:100%;max-width:340px;margin-bottom:24px;}
+.rb-title{font-size:.8rem;color:var(--teal);font-weight:800;letter-spacing:1px;margin-bottom:8px;}
+.rb-row{display:flex;justify-content:space-between;align-items:center;padding:8px 0;border-bottom:1px solid rgba(255,255,255,.08);font-size:.9rem;}
+.rb-row:last-child{border:none;}
+.rb-q{color:rgba(255,255,255,.6);text-align:left;flex:1;padding-right:12px;font-size:.82rem;}
+.rb-mark{font-weight:800;font-size:1rem;}
+.rb-mark.ok{color:var(--green);}
+.rb-mark.bad{color:var(--red);}
+.res-btn{width:100%;max-width:340px;}
+</style>
+</head>
+<body>
+
+<!-- SCREEN 1: QR CODE (shown on laptop projector) -->
+<div id="screen-qr">
+  <div class="badge">ENOC · SAFETY DAY 2026</div>
+  <h1>PSYCHOSOCIAL<br>SAFETY QUIZ</h1>
+  <h2>10 Questions · 100 Points · 20 Seconds Each</h2>
+  <div class="qr-box">
+    <canvas id="qr-canvas" width="220" height="220"></canvas>
+  </div>
+  <div class="qr-url">rino640.github.io/Enoc-quiz</div>
+  <div class="qr-big-text">📲 Scan with your phone camera</div>
+  <div class="qr-sub">Then tap the link — quiz opens on your phone!</div>
+  <hr class="divider">
+  <div style="width:100%;max-width:300px;">
+    <button class="btn btn-teal" onclick="goToName()">▶ Play on This Device</button>
+  </div>
+</div>
+
+<!-- SCREEN 2: NAME ENTRY -->
+<div id="screen-name" class="hidden">
+  <div class="logo">🧠 ENOC QUIZ</div>
+  <h2>Psychosocial Safety Quiz</h2>
+  <p>10 questions · 100 points · 20 seconds each!</p>
+  <input class="name-inp" id="name-inp" type="text"
+    placeholder="Enter your name…" maxlength="20"
+    onkeydown="if(event.key==='Enter')startQuiz()">
+  <div class="name-btn">
+    <button class="btn btn-teal" onclick="startQuiz()">Let's Go! 🚀</button>
+  </div>
+</div>
+
+<!-- SCREEN 3: QUESTION -->
+<div id="screen-question" class="hidden">
+  <div class="q-header">
+    <div class="q-progress" id="q-progress">Question 1 / 10</div>
+    <div class="q-timer" id="q-timer">20</div>
+  </div>
+  <div class="tbar-wrap"><div class="tbar" id="tbar"></div></div>
+  <div class="score-strip">
+    <span>Score</span>
+    <span class="score-val" id="score-val">0</span>
+  </div>
+  <div class="q-num" id="q-num">QUESTION 1 OF 10</div>
+  <div class="q-text" id="q-text"></div>
+  <div class="q-opts" id="q-opts"></div>
+  <div class="q-fb" id="q-fb"></div>
+  <div class="q-hint" id="q-hint"></div>
+</div>
+
+<!-- SCREEN 4: RESULT -->
+<div id="screen-result" class="hidden">
+  <div class="res-trophy" id="res-trophy">🏆</div>
+  <div class="res-name" id="res-name"></div>
+  <div class="res-label">YOUR SCORE</div>
+  <div class="res-score" id="res-score">0<span>/100</span></div>
+  <div class="res-bar-wrap"><div class="res-bar" id="res-bar" style="width:0%"></div></div>
+  <div class="res-msg" id="res-msg"></div>
+  <div class="res-breakdown" id="res-breakdown"></div>
+  <div class="res-btn">
+    <button class="btn btn-teal" onclick="playAgain()">🔄 Play Again</button>
+  </div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js" onerror="window.QR_FAIL=true"></script>
+<script>
+const QS=[
+  {q:"Which of these is a PSYCHOSOCIAL risk at work?",opts:["A wet floor in the corridor","Your manager never gives you feedback","A broken chair at your desk","Loud noise from the air conditioning"],c:1,ex:"Lack of feedback creates uncertainty and stress — a psychosocial risk."},
+  {q:"Ahmed has 50 urgent tasks with no clear priority. What psychosocial risk is this?",opts:["Physical hazard","Chemical exposure","Work overload and role confusion","Noise hazard"],c:2,ex:"Excessive workload with unclear priorities is a classic psychosocial hazard."},
+  {q:"Psychosocial stress can ONLY affect your mood — it cannot cause physical accidents. True or False?",opts:["True — stress only affects feelings","False — stress causes fatigue and poor decisions leading to accidents","True — accidents are always physical","False — but only for manual workers"],c:1,ex:"Stress causes fatigue and slower reactions — directly increasing accident risk."},
+  {q:"Which is a warning sign a colleague may be suffering from psychosocial stress?",opts:["They arrive on time and complete all tasks","They seem withdrawn, make more errors, and skip lunch","They use the printer more than usual","They attend all meetings and take notes"],c:1,ex:"Withdrawal, increased errors, and skipping meals are warning signs of distress."},
+  {q:"What does 'psychosocial' mean in the workplace?",opts:["Physical dangers in the workplace","How work design and management affects mental wellbeing","Social events and team building","Psychological tests done by HR"],c:1,ex:"Psychosocial = how work design and management affect your mental and emotional health."},
+  {q:"A manager regularly shouts at staff in front of others. This psychosocial hazard is called:",opts:["Organisational change","Workplace bullying and harassment","Role ambiguity","Work-life imbalance"],c:1,ex:"Shouting and humiliating staff is workplace bullying — a serious psychosocial hazard."},
+  {q:"A colleague looks stressed and overwhelmed. What is the BEST response?",opts:["Ignore it — none of your business","Tell your manager they are not performing","Simply ask: 'Are you OK? Can I help?'","Wait for them to come to you when ready"],c:2,ex:"A simple genuine check-in can make a huge difference and builds a supportive culture."},
+  {q:"The ILO World Safety Day 2026 theme is about:",opts:["Climate change and outdoor workers","AI and digitalization at work","Good psychosocial working environments","Chemical hazards in industry"],c:2,ex:"ILO 2026: Good Psychosocial Working Environments — A Pathway to Thriving Workers."},
+  {q:"Which action helps CREATE a good psychosocial work environment?",opts:["Assigning tasks without explanation","Setting clear roles, fair workloads, and recognising good work","Expecting staff to manage stress privately","Keeping all communication formal via email only"],c:1,ex:"Clarity, fairness and recognition are the pillars of a healthy psychosocial environment."},
+  {q:"A worker says 'I just can't keep up.' The RIGHT manager response is:",opts:["Tell them to work faster","Say nothing — professionals handle pressure","Sit down privately, listen, and reduce the load together","Report them to HR immediately"],c:2,ex:"Listening and taking action to reduce workload directly addresses the psychosocial hazard."}
+];
+const TIME=20,COLORS=['A','B','C','D'];
+let name='',qIdx=0,score=0,answers=[],timerIv=null,tv=TIME,answered=false;
+
+function show(id){['screen-qr','screen-name','screen-question','screen-result'].forEach(s=>document.getElementById(s).classList.add('hidden'));document.getElementById(id).classList.remove('hidden');}
+
+// QR
+function buildQR(){
+  const canvas=document.getElementById('qr-canvas');
+  const url='https://rino640.github.io/Enoc-quiz/ENOC_Psychosocial_Quiz_2026_FINAL.html';
+  if(typeof QRCode!=='undefined'&&!window.QR_FAIL){
+    try{
+      const tmp=document.createElement('div');
+      new QRCode(tmp,{text:url,width:220,height:220,colorDark:'#0d1e35',colorLight:'#ffffff',correctLevel:QRCode.CorrectLevel.M});
+      setTimeout(()=>{
+        const src=tmp.querySelector('img')||tmp.querySelector('canvas');
+        if(src){const ctx=canvas.getContext('2d');ctx.fillStyle='#fff';ctx.fillRect(0,0,220,220);if(src.tagName==='IMG'){const i=new Image();i.onload=()=>ctx.drawImage(i,0,0,220,220);i.src=src.src;}else ctx.drawImage(src,0,0,220,220);}
+      },300);return;
+    }catch(e){}
+  }
+  // Fallback QR visual
+  const ctx=canvas.getContext('2d'),s=220;
+  ctx.fillStyle='#fff';ctx.fillRect(0,0,s,s);ctx.fillStyle='#0d1e35';
+  [[4,4],[4,154],[154,4]].forEach(([x,y])=>{ctx.fillRect(x,y,62,62);ctx.fillStyle='#fff';ctx.fillRect(x+9,y+9,44,44);ctx.fillStyle='#0d1e35';ctx.fillRect(x+18,y+18,26,26);ctx.fillStyle='#0d1e35';});
+  for(let r=0;r<10;r++)for(let c=0;c<10;c++){if(Math.random()>.45)ctx.fillRect(72+c*13,4+r*13,11,11);if(Math.random()>.45)ctx.fillRect(4+c*13,72+r*13,11,11);if(Math.random()>.45)ctx.fillRect(72+c*13,72+r*13,11,11);}
+  ctx.font='bold 9px monospace';ctx.textAlign='center';ctx.fillText('SCAN TO PLAY',110,208);ctx.font='7px monospace';ctx.fillText('rino640.github.io/Enoc-quiz',110,218);
+}
+
+function goToName(){show('screen-name');setTimeout(()=>document.getElementById('name-inp').focus(),300);}
+
+function startQuiz(){
+  const inp=document.getElementById('name-inp');
+  const n=(inp.value||'').trim();
+  if(!n){inp.style.borderColor='var(--red)';inp.focus();return;}
+  name=n;score=0;qIdx=0;answers=[];
+  show('screen-question');loadQ(0);
+}
+
+function loadQ(i){
+  answered=false;clearInterval(timerIv);tv=TIME;
+  const q=QS[i];
+  document.getElementById('q-progress').textContent=`Question ${i+1} / ${QS.length}`;
+  document.getElementById('q-num').textContent=`QUESTION ${i+1} OF ${QS.length}`;
+  document.getElementById('q-text').textContent=q.q;
+  document.getElementById('score-val').textContent=score;
+  document.getElementById('q-fb').className='q-fb';
+  document.getElementById('q-hint').textContent='';
+  const te=document.getElementById('q-timer'),be=document.getElementById('tbar');
+  te.textContent=TIME;te.className='q-timer';be.style.width='100%';be.className='tbar';
+  const optsEl=document.getElementById('q-opts');optsEl.innerHTML='';
+  q.opts.forEach((o,j)=>{
+    const btn=document.createElement('button');
+    btn.className=`q-opt ${COLORS[j]}`;btn.id=`o${j}`;
+    btn.innerHTML=`<div class="opt-ltr">${COLORS[j]}</div>${o.replace(/&/g,'&amp;').replace(/</g,'&lt;')}`;
+    btn.onclick=()=>pick(j);
+    optsEl.appendChild(btn);
+  });
+  timerIv=setInterval(()=>{
+    tv--;te.textContent=Math.max(0,tv);be.style.width=(tv/TIME*100)+'%';
+    if(tv<=5){te.className='q-timer urgent';be.className='tbar urgent';}
+    if(tv<=0){clearInterval(timerIv);if(!answered)timeout();}
+  },1000);
+}
+
+function pick(j){
+  if(answered)return;answered=true;clearInterval(timerIv);
+  const q=QS[qIdx],ok=j===q.c;
+  if(ok)score+=10;answers.push(ok);
+  document.querySelectorAll('.q-opt').forEach(b=>b.disabled=true);
+  document.getElementById(`o${j}`).classList.add(ok?'correct':'my-wrong');
+  if(!ok)document.getElementById(`o${q.c}`).classList.add('correct');
+  document.querySelectorAll('.q-opt').forEach((b,k)=>{if(k!==q.c&&k!==j)b.classList.add('wrong');});
+  const fb=document.getElementById('q-fb');
+  fb.className='q-fb '+(ok?'ok':'bad');
+  fb.innerHTML=(ok?'✅ Correct! +10 points':'❌ Wrong answer')+'<br><small style="font-weight:600;opacity:.85">'+q.ex+'</small>';
+  document.getElementById('score-val').textContent=score;
+  autoNext();
+}
+
+function timeout(){
+  answered=true;answers.push(false);
+  const q=QS[qIdx];
+  document.querySelectorAll('.q-opt').forEach(b=>b.disabled=true);
+  document.getElementById(`o${q.c}`).classList.add('correct');
+  document.querySelectorAll('.q-opt').forEach((b,k)=>{if(k!==q.c)b.classList.add('wrong');});
+  document.getElementById('q-fb').className='q-fb bad';
+  document.getElementById('q-fb').innerHTML='⏱️ Time\'s up!<br><small style="font-weight:600;opacity:.85">'+q.ex+'</small>';
+  autoNext();
+}
+
+function autoNext(){
+  let cd=3;const h=document.getElementById('q-hint');h.textContent=`Next in ${cd}s…`;
+  const iv=setInterval(()=>{cd--;cd>0?h.textContent=`Next in ${cd}s…`:(clearInterval(iv),qIdx+1<QS.length?(qIdx++,loadQ(qIdx)):showResult());},1000);
+}
+
+function showResult(){
+  show('screen-result');
+  document.getElementById('res-name').textContent=name;
+  document.getElementById('res-score').innerHTML=`${score}<span>/100</span>`;
+  setTimeout(()=>document.getElementById('res-bar').style.width=score+'%',200);
+  let t,m;
+  if(score===100){t='🏆';m='Perfect score! You are a Psychosocial Safety Expert! Outstanding!';}
+  else if(score>=80){t='🌟';m='Excellent! You have a strong understanding of psychosocial safety.';}
+  else if(score>=60){t='👍';m='Good effort! Review today\'s session to strengthen your knowledge.';}
+  else if(score>=40){t='📚';m='Keep learning! Psychosocial safety is important for all of us at ENOC.';}
+  else{t='💪';m='Thank you for playing! Every question is a learning opportunity. Keep going!';}
+  document.getElementById('res-trophy').textContent=t;
+  document.getElementById('res-msg').textContent=m;
+  const bd=document.getElementById('res-breakdown');
+  bd.innerHTML='<div class="rb-title">YOUR ANSWERS</div>';
+  QS.forEach((q,i)=>{
+    const row=document.createElement('div');row.className='rb-row';
+    row.innerHTML=`<div class="rb-q">Q${i+1}. ${q.q.substring(0,42)}…</div><div class="rb-mark ${answers[i]?'ok':'bad'}">${answers[i]?'✅ +10':'❌ 0'}</div>`;
+    bd.appendChild(row);
+  });
+}
+
+function playAgain(){score=0;qIdx=0;answers=[];name='';document.getElementById('name-inp').value='';show('screen-name');setTimeout(()=>document.getElementById('name-inp').focus(),300);}
+
+window.addEventListener('load',()=>{
+  buildQR();
+  // Mobile = go straight to quiz, Desktop = show QR
+  if(/Android|iPhone|iPad|iPod|Mobile/i.test(navigator.userAgent)){
+    show('screen-name');
+    setTimeout(()=>document.getElementById('name-inp').focus(),400);
+  }
+});
+</script>
+</body>
+</html>
