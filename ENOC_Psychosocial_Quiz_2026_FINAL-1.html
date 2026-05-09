@@ -1,0 +1,1377 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>ENOC Safety Quiz 2026 – Psychosocial Safety</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&family=Bebas+Neue&display=swap');
+
+*{margin:0;padding:0;box-sizing:border-box;}
+
+:root{
+  --navy:#0d1e35;
+  --navy2:#0a1525;
+  --teal:#00b4b4;
+  --teal2:#007d8a;
+  --red:#e8192c;
+  --green:#27ae60;
+  --amber:#f39c12;
+  --white:#fff;
+  --offwhite:#f0f8f8;
+}
+
+body{
+  font-family:'Nunito',sans-serif;
+  background:var(--navy2);
+  color:var(--white);
+  min-height:100vh;
+  overflow-x:hidden;
+}
+
+/* ── SHARED ── */
+.hidden{display:none!important;}
+.btn{
+  display:inline-block;padding:14px 32px;border:none;border-radius:10px;
+  font-family:'Nunito',sans-serif;font-size:1rem;font-weight:800;
+  cursor:pointer;transition:all .2s;letter-spacing:.5px;
+  text-transform:uppercase;
+}
+.btn-teal{background:var(--teal);color:#fff;}
+.btn-teal:hover{background:var(--teal2);transform:translateY(-2px);}
+.btn-red{background:var(--red);color:#fff;}
+.btn-red:hover{background:#c0152a;transform:translateY(-2px);}
+.btn-green{background:var(--green);color:#fff;}
+.btn-green:hover{background:#229a56;transform:translateY(-2px);}
+.btn-ghost{background:transparent;border:2px solid var(--teal);color:var(--teal);}
+.btn-ghost:hover{background:rgba(0,180,180,.1);}
+
+/* ══════════════════════════════════
+   SCREEN 0: MODE SELECT (host vs player)
+══════════════════════════════════ */
+#screen-mode{
+  display:flex;flex-direction:column;align-items:center;
+  justify-content:center;min-height:100vh;padding:30px 20px;
+  text-align:center;
+}
+#screen-mode .logo-badge{
+  background:var(--teal);padding:8px 28px;border-radius:20px;
+  font-size:.85rem;font-weight:800;letter-spacing:2px;margin-bottom:24px;
+}
+#screen-mode h1{
+  font-family:'Bebas Neue',sans-serif;font-size:clamp(2.5rem,8vw,4.5rem);
+  color:var(--teal);line-height:1;margin-bottom:8px;
+}
+#screen-mode h2{
+  font-size:clamp(1rem,3vw,1.4rem);color:rgba(255,255,255,.7);
+  font-weight:600;margin-bottom:40px;
+}
+.mode-cards{display:flex;gap:20px;flex-wrap:wrap;justify-content:center;max-width:700px;}
+.mode-card{
+  background:rgba(255,255,255,.06);border:2px solid rgba(0,180,180,.3);
+  border-radius:16px;padding:32px 28px;cursor:pointer;
+  transition:all .25s;flex:1;min-width:240px;max-width:300px;
+}
+.mode-card:hover{border-color:var(--teal);background:rgba(0,180,180,.1);transform:translateY(-4px);}
+.mode-card .icon{font-size:3rem;margin-bottom:12px;}
+.mode-card h3{font-size:1.3rem;font-weight:800;color:var(--teal);margin-bottom:8px;}
+.mode-card p{font-size:.9rem;color:rgba(255,255,255,.6);line-height:1.5;}
+
+/* ══════════════════════════════════
+   SCREEN 1: HOST LOBBY
+══════════════════════════════════ */
+#screen-host-lobby{
+  display:flex;flex-direction:column;align-items:center;
+  min-height:100vh;padding:20px;
+}
+.host-header{
+  width:100%;max-width:1100px;
+  display:flex;align-items:center;justify-content:space-between;
+  padding:12px 0;margin-bottom:20px;
+}
+.host-header .logo{
+  background:var(--teal);padding:6px 20px;border-radius:12px;
+  font-size:.8rem;font-weight:800;letter-spacing:2px;
+}
+.host-main{
+  display:flex;gap:24px;width:100%;max-width:1100px;
+  flex-wrap:wrap;justify-content:center;
+}
+
+/* QR panel */
+.qr-panel{
+  background:rgba(255,255,255,.05);border:1px solid rgba(0,180,180,.25);
+  border-radius:16px;padding:24px;
+  display:flex;flex-direction:column;align-items:center;
+  min-width:280px;
+}
+.qr-panel h3{color:var(--teal);font-size:1rem;font-weight:800;margin-bottom:4px;text-align:center;}
+.qr-panel .url-box{
+  background:#fff;color:var(--navy);padding:6px 12px;border-radius:8px;
+  font-size:.7rem;font-weight:700;margin-bottom:14px;word-break:break-all;text-align:center;max-width:220px;
+}
+#qr-canvas{border-radius:10px;background:#fff;padding:8px;}
+.qr-panel .instruction{
+  margin-top:12px;font-size:.8rem;color:rgba(255,255,255,.6);text-align:center;line-height:1.5;
+}
+.game-pin{
+  margin-top:16px;background:var(--navy);border:2px solid var(--teal);
+  border-radius:10px;padding:10px 20px;text-align:center;
+}
+.game-pin .label{font-size:.7rem;color:var(--teal);font-weight:700;letter-spacing:2px;}
+.game-pin .pin{font-family:'Bebas Neue',sans-serif;font-size:2.5rem;color:#fff;letter-spacing:4px;}
+
+/* Players joined panel */
+.players-panel{
+  background:rgba(255,255,255,.05);border:1px solid rgba(0,180,180,.25);
+  border-radius:16px;padding:24px;flex:1;min-width:280px;
+}
+.players-panel h3{color:var(--teal);font-size:1rem;font-weight:800;margin-bottom:16px;}
+.player-count{
+  font-family:'Bebas Neue',sans-serif;font-size:3rem;color:var(--teal);
+  text-align:center;margin-bottom:8px;
+}
+.player-count-label{text-align:center;font-size:.85rem;color:rgba(255,255,255,.6);margin-bottom:16px;}
+#players-list{
+  display:flex;flex-wrap:wrap;gap:8px;max-height:240px;overflow-y:auto;
+}
+.player-chip{
+  background:rgba(0,180,180,.15);border:1px solid rgba(0,180,180,.4);
+  border-radius:20px;padding:6px 14px;font-size:.85rem;font-weight:700;
+  animation:popIn .3s ease;
+}
+@keyframes popIn{from{transform:scale(0);opacity:0;}to{transform:scale(1);opacity:1;}}
+
+.host-controls{
+  margin-top:24px;width:100%;max-width:1100px;
+  display:flex;gap:12px;justify-content:center;flex-wrap:wrap;
+}
+
+/* ══════════════════════════════════
+   SCREEN 2: HOST QUESTION VIEW
+══════════════════════════════════ */
+#screen-host-question{
+  display:flex;flex-direction:column;align-items:center;
+  min-height:100vh;padding:20px;
+}
+.hq-header{
+  width:100%;max-width:1100px;
+  display:flex;align-items:center;justify-content:space-between;
+  margin-bottom:16px;
+}
+.hq-progress{font-size:.9rem;color:rgba(255,255,255,.6);font-weight:700;}
+.hq-timer-ring{
+  width:72px;height:72px;position:relative;
+}
+.hq-timer-ring svg{transform:rotate(-90deg);}
+.hq-timer-ring .timer-num{
+  position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);
+  font-family:'Bebas Neue',sans-serif;font-size:1.6rem;
+}
+.hq-question-box{
+  width:100%;max-width:1100px;
+  background:rgba(255,255,255,.07);border:2px solid rgba(0,180,180,.3);
+  border-radius:16px;padding:28px;margin-bottom:20px;text-align:center;
+}
+.hq-question-num{
+  font-size:.85rem;color:var(--teal);font-weight:800;
+  letter-spacing:2px;margin-bottom:10px;
+}
+.hq-question-text{
+  font-size:clamp(1.2rem,3vw,1.7rem);font-weight:800;line-height:1.4;
+}
+.hq-options{
+  width:100%;max-width:1100px;
+  display:grid;grid-template-columns:1fr 1fr;gap:12px;
+  margin-bottom:20px;
+}
+.hq-option{
+  border-radius:12px;padding:16px 20px;font-size:1rem;font-weight:700;
+  border:2px solid rgba(255,255,255,.15);
+  display:flex;align-items:center;gap:12px;
+  transition:all .3s;
+}
+.hq-option.A{background:rgba(231,76,60,.2);border-color:rgba(231,76,60,.5);}
+.hq-option.B{background:rgba(52,152,219,.2);border-color:rgba(52,152,219,.5);}
+.hq-option.C{background:rgba(241,196,15,.2);border-color:rgba(241,196,15,.5);}
+.hq-option.D{background:rgba(46,204,113,.2);border-color:rgba(46,204,113,.5);}
+.hq-option.correct{background:rgba(39,174,96,.5);border-color:#27ae60;transform:scale(1.02);}
+.hq-option.wrong{opacity:.4;}
+.opt-letter{
+  width:32px;height:32px;border-radius:8px;
+  display:flex;align-items:center;justify-content:center;
+  font-weight:900;font-size:.9rem;flex-shrink:0;
+}
+.hq-option.A .opt-letter{background:rgba(231,76,60,.6);}
+.hq-option.B .opt-letter{background:rgba(52,152,219,.6);}
+.hq-option.C .opt-letter{background:rgba(241,196,15,.6);}
+.hq-option.D .opt-letter{background:rgba(46,204,113,.6);}
+
+/* Answer stats bar */
+.answer-stats{
+  width:100%;max-width:1100px;
+  display:flex;gap:8px;margin-bottom:16px;
+}
+.stat-bar{flex:1;text-align:center;}
+.stat-bar-fill{
+  height:40px;border-radius:6px;margin-bottom:4px;
+  display:flex;align-items:center;justify-content:center;
+  font-weight:800;font-size:.9rem;
+  transition:height .4s ease;min-height:8px;
+}
+.stat-bar.A .stat-bar-fill{background:rgba(231,76,60,.7);}
+.stat-bar.B .stat-bar-fill{background:rgba(52,152,219,.7);}
+.stat-bar.C .stat-bar-fill{background:rgba(241,196,15,.7);}
+.stat-bar.D .stat-bar-fill{background:rgba(46,204,113,.7);}
+.stat-bar .stat-label{font-size:.75rem;color:rgba(255,255,255,.6);}
+
+/* ══════════════════════════════════
+   SCREEN 3: HOST LEADERBOARD
+══════════════════════════════════ */
+#screen-host-leaderboard{
+  display:flex;flex-direction:column;align-items:center;
+  min-height:100vh;padding:20px;
+}
+.lb-header{
+  width:100%;max-width:1000px;text-align:center;margin-bottom:24px;
+}
+.lb-header h2{
+  font-family:'Bebas Neue',sans-serif;font-size:clamp(2rem,5vw,3.5rem);
+  color:var(--teal);margin-bottom:4px;
+}
+.lb-header p{color:rgba(255,255,255,.6);font-size:.9rem;}
+#leaderboard-list{width:100%;max-width:800px;}
+.lb-row{
+  display:flex;align-items:center;gap:16px;
+  background:rgba(255,255,255,.06);border:1px solid rgba(0,180,180,.2);
+  border-radius:12px;padding:14px 20px;margin-bottom:10px;
+  animation:slideIn .4s ease;transition:all .3s;
+}
+.lb-row.rank-1{background:rgba(255,215,0,.12);border-color:gold;}
+.lb-row.rank-2{background:rgba(192,192,192,.1);border-color:silver;}
+.lb-row.rank-3{background:rgba(205,127,50,.1);border-color:#cd7f32;}
+@keyframes slideIn{from{transform:translateX(-30px);opacity:0;}to{transform:translateX(0);opacity:1;}}
+.lb-rank{
+  font-family:'Bebas Neue',sans-serif;font-size:1.8rem;
+  width:44px;text-align:center;color:rgba(255,255,255,.4);
+}
+.lb-row.rank-1 .lb-rank{color:gold;}
+.lb-row.rank-2 .lb-rank{color:silver;}
+.lb-row.rank-3 .lb-rank{color:#cd7f32;}
+.lb-medal{font-size:1.6rem;width:36px;text-align:center;}
+.lb-name{flex:1;font-size:1.1rem;font-weight:800;}
+.lb-score{
+  font-family:'Bebas Neue',sans-serif;font-size:1.8rem;color:var(--teal);
+}
+.lb-max{font-size:.8rem;color:rgba(255,255,255,.4);}
+.lb-controls{margin-top:24px;display:flex;gap:12px;flex-wrap:wrap;justify-content:center;}
+
+/* ══════════════════════════════════
+   SCREEN 4: PLAYER – NAME ENTRY
+══════════════════════════════════ */
+#screen-player-join{
+  display:flex;flex-direction:column;align-items:center;
+  justify-content:center;min-height:100vh;padding:20px;
+  text-align:center;
+}
+#screen-player-join .logo{
+  font-family:'Bebas Neue',sans-serif;font-size:2rem;color:var(--teal);
+  margin-bottom:8px;
+}
+#screen-player-join h2{font-size:1.3rem;font-weight:800;margin-bottom:8px;}
+#screen-player-join p{color:rgba(255,255,255,.6);font-size:.9rem;margin-bottom:32px;}
+.name-input{
+  width:100%;max-width:340px;padding:16px 20px;
+  border:2px solid rgba(0,180,180,.4);border-radius:12px;
+  background:rgba(255,255,255,.08);color:#fff;
+  font-family:'Nunito',sans-serif;font-size:1.1rem;font-weight:700;
+  text-align:center;outline:none;margin-bottom:16px;
+}
+.name-input:focus{border-color:var(--teal);}
+.name-input::placeholder{color:rgba(255,255,255,.3);}
+
+/* ══════════════════════════════════
+   SCREEN 5: PLAYER – WAITING
+══════════════════════════════════ */
+#screen-player-wait{
+  display:flex;flex-direction:column;align-items:center;
+  justify-content:center;min-height:100vh;padding:20px;text-align:center;
+}
+.wait-avatar{
+  font-size:4rem;margin-bottom:16px;
+  animation:bounce 1.5s infinite;
+}
+@keyframes bounce{0%,100%{transform:translateY(0);}50%{transform:translateY(-12px);}}
+#screen-player-wait h2{font-size:1.4rem;font-weight:800;color:var(--teal);margin-bottom:8px;}
+#screen-player-wait p{color:rgba(255,255,255,.6);font-size:.9rem;}
+.pulse-dots{margin-top:16px;display:flex;gap:8px;justify-content:center;}
+.pulse-dots span{
+  width:10px;height:10px;border-radius:50%;background:var(--teal);
+  animation:pulseDot 1.2s infinite;
+}
+.pulse-dots span:nth-child(2){animation-delay:.2s;}
+.pulse-dots span:nth-child(3){animation-delay:.4s;}
+@keyframes pulseDot{0%,100%{opacity:.3;transform:scale(.8);}50%{opacity:1;transform:scale(1.2);}}
+
+/* ══════════════════════════════════
+   SCREEN 6: PLAYER – QUESTION
+══════════════════════════════════ */
+#screen-player-question{
+  display:flex;flex-direction:column;align-items:center;
+  min-height:100vh;padding:16px;
+}
+.pq-header{
+  width:100%;display:flex;justify-content:space-between;align-items:center;
+  margin-bottom:12px;
+}
+.pq-info{font-size:.8rem;color:rgba(255,255,255,.6);font-weight:700;}
+.pq-timer{
+  font-family:'Bebas Neue',sans-serif;font-size:2rem;
+  padding:6px 16px;border-radius:10px;
+  background:rgba(0,180,180,.2);border:2px solid var(--teal);
+  transition:all .3s;
+}
+.pq-timer.urgent{background:rgba(232,25,44,.25);border-color:var(--red);color:var(--red);}
+.pq-score-strip{
+  width:100%;background:rgba(0,180,180,.12);border:1px solid rgba(0,180,180,.3);
+  border-radius:10px;padding:8px 16px;
+  display:flex;justify-content:space-between;align-items:center;
+  margin-bottom:12px;font-size:.85rem;font-weight:700;
+}
+.pq-score-strip span:last-child{color:var(--teal);font-family:'Bebas Neue',sans-serif;font-size:1.3rem;}
+.pq-qnum{
+  font-size:.75rem;color:var(--teal);font-weight:800;
+  letter-spacing:2px;margin-bottom:8px;
+}
+.pq-question{
+  width:100%;background:rgba(255,255,255,.06);border-radius:14px;
+  padding:18px;margin-bottom:16px;
+  font-size:clamp(1rem,4vw,1.2rem);font-weight:800;line-height:1.5;
+  text-align:center;min-height:80px;display:flex;align-items:center;justify-content:center;
+}
+.pq-options{width:100%;display:flex;flex-direction:column;gap:10px;}
+.pq-option{
+  width:100%;padding:16px 18px;border-radius:12px;
+  font-family:'Nunito',sans-serif;font-size:1rem;font-weight:800;
+  border:none;cursor:pointer;text-align:left;
+  display:flex;align-items:center;gap:12px;
+  transition:all .2s;
+}
+.pq-option:active{transform:scale(.97);}
+.pq-option.A{background:rgba(231,76,60,.25);color:#fff;border:2px solid rgba(231,76,60,.5);}
+.pq-option.B{background:rgba(52,152,219,.25);color:#fff;border:2px solid rgba(52,152,219,.5);}
+.pq-option.C{background:rgba(241,196,15,.25);color:#fff;border:2px solid rgba(241,196,15,.5);}
+.pq-option.D{background:rgba(46,204,113,.25);color:#fff;border:2px solid rgba(46,204,113,.5);}
+.pq-option:disabled{cursor:default;}
+.pq-option.selected-correct{background:rgba(39,174,96,.5)!important;border-color:#27ae60!important;}
+.pq-option.selected-wrong{background:rgba(232,25,44,.5)!important;border-color:var(--red)!important;}
+.pq-option.reveal-correct{background:rgba(39,174,96,.4)!important;border-color:#27ae60!important;}
+.pq-opt-letter{
+  width:28px;height:28px;border-radius:6px;flex-shrink:0;
+  display:flex;align-items:center;justify-content:center;font-size:.8rem;font-weight:900;
+}
+.pq-option.A .pq-opt-letter{background:rgba(231,76,60,.6);}
+.pq-option.B .pq-opt-letter{background:rgba(52,152,219,.6);}
+.pq-option.C .pq-opt-letter{background:rgba(241,196,15,.6);}
+.pq-option.D .pq-opt-letter{background:rgba(46,204,113,.6);}
+.pq-feedback{
+  margin-top:14px;padding:14px;border-radius:10px;
+  text-align:center;font-weight:800;font-size:1rem;
+  display:none;
+}
+.pq-feedback.correct{background:rgba(39,174,96,.25);border:1px solid #27ae60;display:block;}
+.pq-feedback.wrong{background:rgba(232,25,44,.2);border:1px solid var(--red);display:block;}
+.pq-next-notice{
+  margin-top:12px;text-align:center;font-size:.85rem;
+  color:rgba(255,255,255,.5);
+}
+
+/* ══════════════════════════════════
+   SCREEN 7: PLAYER FINAL SCORE
+══════════════════════════════════ */
+#screen-player-done{
+  display:flex;flex-direction:column;align-items:center;
+  justify-content:center;min-height:100vh;padding:20px;text-align:center;
+}
+.done-trophy{font-size:5rem;margin-bottom:12px;animation:bounce 1.5s infinite;}
+#screen-player-done h2{
+  font-family:'Bebas Neue',sans-serif;font-size:2.5rem;color:var(--teal);margin-bottom:4px;
+}
+.done-score{
+  font-family:'Bebas Neue',sans-serif;font-size:5rem;color:#fff;
+  line-height:1;margin:8px 0;
+}
+.done-score span{font-size:2rem;color:rgba(255,255,255,.5);}
+.done-name{font-size:1.2rem;font-weight:700;color:rgba(255,255,255,.7);margin-bottom:20px;}
+.done-msg{
+  background:rgba(0,180,180,.15);border:1px solid rgba(0,180,180,.4);
+  border-radius:12px;padding:16px 24px;max-width:320px;
+  font-size:.95rem;color:rgba(255,255,255,.8);line-height:1.6;margin-bottom:24px;
+}
+.done-rank{
+  font-size:1rem;color:rgba(255,255,255,.5);margin-bottom:4px;
+}
+
+/* ══════════════════════════════════
+   TIMER BAR
+══════════════════════════════════ */
+.timer-bar-wrap{width:100%;max-width:1100px;height:8px;background:rgba(255,255,255,.1);border-radius:4px;margin-bottom:16px;}
+.timer-bar{height:8px;border-radius:4px;background:var(--teal);transition:width 1s linear,background .5s;}
+.timer-bar.urgent{background:var(--red);}
+
+/* ══════════════════════════════════
+   RESPONSIVE
+══════════════════════════════════ */
+@media(max-width:600px){
+  .hq-options{grid-template-columns:1fr;}
+  .mode-cards{flex-direction:column;align-items:center;}
+}
+</style>
+</head>
+<body>
+
+<!-- ── SCREEN 0: MODE SELECT ── -->
+<div id="screen-mode">
+  <div class="logo-badge">ENOC · SAFETY DAY 2026</div>
+  <h1>PSYCHOSOCIAL<br>SAFETY QUIZ</h1>
+  <h2>Test your knowledge — 10 questions · 100 points</h2>
+  <div class="mode-cards">
+    <div class="mode-card" onclick="startHost()">
+      <div class="icon">🖥️</div>
+      <h3>I'm the Host</h3>
+      <p>Show this on the big screen. Staff will scan the QR code and join from their phones.</p>
+    </div>
+    <div class="mode-card" onclick="startPlayer()">
+      <div class="icon">📱</div>
+      <h3>I'm a Player</h3>
+      <p>Scanned the QR? Tap here to join, enter your name, and start playing!</p>
+    </div>
+  </div>
+</div>
+
+<!-- ── SCREEN 1: HOST LOBBY ── -->
+<div id="screen-host-lobby" class="hidden">
+  <div class="host-header">
+    <div class="logo">ENOC · QUIZ 2026</div>
+    <div style="font-size:.85rem;color:rgba(255,255,255,.5);">Psychosocial Safety</div>
+  </div>
+  <div class="host-main">
+    <!-- QR Panel -->
+    <div class="qr-panel">
+      <h3>📲 Staff scan to join</h3>
+      <div class="url-box" id="qr-url-display">Loading…</div>
+      <canvas id="qr-canvas" width="180" height="180"></canvas>
+      <div class="instruction">Point your phone camera<br>at the QR code to join!</div>
+      <div class="game-pin">
+        <div class="label">GAME PIN</div>
+        <div class="pin" id="pin-display">----</div>
+      </div>
+    </div>
+    <!-- Players Panel -->
+    <div class="players-panel">
+      <h3>👥 Players Joined</h3>
+      <div class="player-count" id="player-count">0</div>
+      <div class="player-count-label">players waiting…</div>
+      <div id="players-list"></div>
+    </div>
+  </div>
+  <div class="host-controls">
+    <button class="btn btn-teal" onclick="hostStartGame()" id="btn-start-game">
+      ▶ Start Quiz
+    </button>
+    <button class="btn btn-ghost" onclick="showLeaderboard()">📊 Leaderboard</button>
+    <button class="btn btn-ghost" onclick="location.reload()">↺ Reset</button>
+  </div>
+</div>
+
+<!-- ── SCREEN 2: HOST QUESTION VIEW ── -->
+<div id="screen-host-question" class="hidden">
+  <div class="hq-header">
+    <div class="hq-progress" id="hq-progress">Question 1 of 10</div>
+    <div style="display:flex;gap:8px;align-items:center;">
+      <div id="hq-answered-count" style="font-size:.85rem;color:rgba(255,255,255,.5);"></div>
+      <button class="btn btn-teal" style="padding:8px 20px;font-size:.85rem;" onclick="hostNextQuestion()" id="btn-next-q">Next →</button>
+    </div>
+  </div>
+  <div class="timer-bar-wrap"><div class="timer-bar" id="host-timer-bar"></div></div>
+  <div class="hq-question-box">
+    <div class="hq-question-num" id="hq-q-num">QUESTION 1</div>
+    <div class="hq-question-text" id="hq-q-text"></div>
+  </div>
+  <div class="hq-options" id="hq-options"></div>
+  <div class="answer-stats" id="answer-stats"></div>
+</div>
+
+<!-- ── SCREEN 3: HOST LEADERBOARD ── -->
+<div id="screen-host-leaderboard" class="hidden">
+  <div class="lb-header">
+    <h2>🏆 LIVE LEADERBOARD</h2>
+    <p id="lb-subtitle">Scores update in real time</p>
+  </div>
+  <div id="leaderboard-list"></div>
+  <div class="lb-controls">
+    <button class="btn btn-teal" onclick="hostNextQuestion()" id="btn-lb-continue">▶ Continue Quiz</button>
+    <button class="btn btn-ghost" onclick="showHostQuestion()">← Back to Question</button>
+    <button class="btn btn-ghost" onclick="location.reload()">↺ New Game</button>
+  </div>
+</div>
+
+<!-- ── SCREEN 4: PLAYER JOIN ── -->
+<div id="screen-player-join" class="hidden">
+  <div class="logo">🧠 ENOC QUIZ</div>
+  <h2>Psychosocial Safety Quiz</h2>
+  <p>Enter your name and join the game!</p>
+  <input class="name-input" id="player-name-input" type="text"
+         placeholder="Your Name…" maxlength="20"
+         onkeydown="if(event.key==='Enter')joinGame()">
+  <button class="btn btn-teal" onclick="joinGame()" style="width:100%;max-width:340px;">
+    Join Game 🚀
+  </button>
+  <p style="margin-top:16px;font-size:.8rem;color:rgba(255,255,255,.4);">
+    Make sure the host has started the lobby first.
+  </p>
+</div>
+
+<!-- ── SCREEN 5: PLAYER WAITING ── -->
+<div id="screen-player-wait" class="hidden">
+  <div class="wait-avatar">🎯</div>
+  <h2 id="wait-greeting">Ready, Player!</h2>
+  <p>Waiting for the host to start the quiz…</p>
+  <div class="pulse-dots">
+    <span></span><span></span><span></span>
+  </div>
+  <p style="margin-top:24px;font-size:.8rem;color:rgba(255,255,255,.35);">
+    Keep this screen open on your phone
+  </p>
+</div>
+
+<!-- ── SCREEN 6: PLAYER QUESTION ── -->
+<div id="screen-player-question" class="hidden">
+  <div class="pq-header">
+    <div class="pq-info" id="pq-info">Q 1/10</div>
+    <div class="pq-timer" id="pq-timer">20</div>
+  </div>
+  <div class="pq-score-strip">
+    <span>Your Score</span>
+    <span id="pq-current-score">0</span>
+  </div>
+  <div class="timer-bar-wrap" style="max-width:100%;margin-bottom:12px;">
+    <div class="timer-bar" id="player-timer-bar"></div>
+  </div>
+  <div class="pq-qnum" id="pq-qnum">QUESTION 1 OF 10</div>
+  <div class="pq-question" id="pq-question"></div>
+  <div class="pq-options" id="pq-options"></div>
+  <div class="pq-feedback" id="pq-feedback"></div>
+  <div class="pq-next-notice" id="pq-next-notice"></div>
+</div>
+
+<!-- ── SCREEN 7: PLAYER DONE ── -->
+<div id="screen-player-done" class="hidden">
+  <div class="done-trophy" id="done-trophy">🏆</div>
+  <div class="done-name" id="done-player-name"></div>
+  <h2>YOUR SCORE</h2>
+  <div class="done-score" id="done-score">0<span>/100</span></div>
+  <div class="done-msg" id="done-msg"></div>
+  <div class="done-rank" id="done-rank"></div>
+  <button class="btn btn-ghost" onclick="location.reload()">Play Again</button>
+</div>
+
+<!-- QR code library (self-contained, no CDN needed) -->
+<script>
+// ══════════════════════════════════════════════════════════════════
+// TINY QR CODE GENERATOR (pure JS, no dependencies)
+// ══════════════════════════════════════════════════════════════════
+var QRCode=(function(){
+"use strict";
+// Minimal QR encoder for URLs — Mode: Byte, ECC: M
+function makeQR(text,size){
+  // Use a canvas-based approach with qrcodejs logic embedded
+  var canvas=document.createElement('canvas');
+  canvas.width=size;canvas.height=size;
+  var ctx=canvas.getContext('2d');
+  // Fallback: draw a placeholder with the URL displayed
+  // We'll use the full qrcodejs below
+  return canvas;
+}
+return {make:makeQR};
+})();
+</script>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js" 
+  onerror="QR_FALLBACK=true"></script>
+
+<script>
+// ══════════════════════════════════════════════════════════════════
+// QUESTIONS
+// ══════════════════════════════════════════════════════════════════
+const PERMANENT_URL = 'https://rino640.github.io/Enoc-quiz/ENOC_Psychosocial_Quiz_2026_FINAL.html?mode=player';
+const PERMANENT_URL_SHORT = 'rino640.github.io/Enoc-quiz';
+
+const QUESTIONS = [
+  {
+    q: "Which of these is an example of a PSYCHOSOCIAL risk at work?",
+    opts: [
+      "A wet floor in the corridor",
+      "Your manager never gives you feedback on your work",
+      "A broken chair in the office",
+      "Loud noise from the air conditioning"
+    ],
+    correct: 1,
+    explain: "Lack of feedback creates uncertainty and stress — a psychosocial risk affecting mental wellbeing."
+  },
+  {
+    q: "Ahmed has been given 50 urgent tasks with no clear priority. What type of psychosocial risk is this?",
+    opts: [
+      "Physical hazard",
+      "Chemical exposure",
+      "Work overload and role confusion",
+      "Noise hazard"
+    ],
+    correct: 2,
+    explain: "Excessive workload with unclear priorities is a classic psychosocial hazard causing stress and burnout."
+  },
+  {
+    q: "True or false: Psychosocial stress can ONLY affect your mood — it cannot cause physical accidents.",
+    opts: [
+      "True — stress only affects how you feel",
+      "False — stress causes fatigue and poor decisions that lead to accidents",
+      "True — accidents are always caused by physical hazards",
+      "False — but only for manual workers, not office staff"
+    ],
+    correct: 1,
+    explain: "Stress leads to fatigue and slower reactions — directly increasing the risk of physical accidents."
+  },
+  {
+    q: "Which of these is a sign that a colleague may be suffering from psychosocial stress?",
+    opts: [
+      "They arrive on time and complete all tasks",
+      "They seem withdrawn, make more errors, and skip lunch regularly",
+      "They use the printer more than usual",
+      "They attend all meetings and take notes"
+    ],
+    correct: 1,
+    explain: "Withdrawal, increased errors, and skipping meals are warning signs of psychosocial distress."
+  },
+  {
+    q: "What does 'psychosocial' actually mean in the workplace context?",
+    opts: [
+      "Physical dangers in the workplace",
+      "How the way work is designed and managed affects mental wellbeing",
+      "Social events and team-building activities",
+      "Psychological tests conducted by HR"
+    ],
+    correct: 1,
+    explain: "Psychosocial refers to how work design, management, and environment affects mental and emotional health."
+  },
+  {
+    q: "A manager regularly shouts at team members in front of others. What type of psychosocial hazard is this?",
+    opts: [
+      "Organisational change",
+      "Workplace bullying and harassment",
+      "Role ambiguity",
+      "Work-life imbalance"
+    ],
+    correct: 1,
+    explain: "Shouting and humiliating staff constitutes workplace bullying — a serious psychosocial hazard."
+  },
+  {
+    q: "Which is the BEST response when you notice a colleague looks stressed and overwhelmed?",
+    opts: [
+      "Ignore it — it's none of your business",
+      "Tell your manager they are not performing well",
+      "Simply ask: 'Are you OK? Is there anything I can help with?'",
+      "Wait for them to come to you when they are ready"
+    ],
+    correct: 2,
+    explain: "A simple, genuine check-in can make a huge difference and is the foundation of a supportive culture."
+  },
+  {
+    q: "The ILO World Safety Day 2026 theme focuses on:",
+    opts: [
+      "Climate change and outdoor workers",
+      "Artificial intelligence in the workplace",
+      "Good psychosocial working environments",
+      "Chemical hazards in industry"
+    ],
+    correct: 2,
+    explain: "The ILO 2026 theme is: Good Psychosocial Working Environments — A Pathway to Thriving Workers."
+  },
+  {
+    q: "Which action helps CREATE a good psychosocial environment at work?",
+    opts: [
+      "Assigning new tasks without explanation",
+      "Setting clear roles, fair workloads, and recognising good work",
+      "Expecting staff to manage their own stress privately",
+      "Keeping communication formal and only via email"
+    ],
+    correct: 1,
+    explain: "Clarity, fairness, and recognition are pillars of a healthy psychosocial work environment."
+  },
+  {
+    q: "If a worker says 'I just can't keep up' and looks exhausted, the RIGHT manager response is:",
+    opts: [
+      "Tell them to work harder to clear the backlog",
+      "Say nothing — professionals handle pressure themselves",
+      "Sit down privately, listen, and work together to reduce the load",
+      "Report them to HR immediately"
+    ],
+    correct: 2,
+    explain: "Listening, acknowledging, and taking action to reduce workload directly addresses the psychosocial hazard."
+  }
+];
+
+const TIME_PER_Q = 20; // seconds
+
+// ══════════════════════════════════════════════════════════════════
+// SHARED STATE (using localStorage as the "server" across tabs)
+// ══════════════════════════════════════════════════════════════════
+// Game state keys in localStorage:
+//   psq_state: {phase:'lobby'|'question'|'leaderboard'|'done', qIndex:0, qStart:timestamp}
+//   psq_players: [{name, score, answers:[]}]
+//   psq_pin: "1234"
+
+const STORE_STATE   = 'psq_state_v2';
+const STORE_PLAYERS = 'psq_players_v2';
+const STORE_PIN     = 'psq_pin_v2';
+
+function getState(){ try{return JSON.parse(localStorage.getItem(STORE_STATE)||'null');}catch{return null;} }
+function setState(s){ localStorage.setItem(STORE_STATE, JSON.stringify(s)); }
+function getPlayers(){ try{return JSON.parse(localStorage.getItem(STORE_PLAYERS)||'[]');}catch{return[];} }
+function setPlayers(p){ localStorage.setItem(STORE_PLAYERS, JSON.stringify(p)); }
+function getPin(){ return localStorage.getItem(STORE_PIN)||'0000'; }
+function setPin(p){ localStorage.setItem(STORE_PIN, p); }
+
+// Atomic player update (read-modify-write)
+function updatePlayer(name, fn){
+  let players = getPlayers();
+  let idx = players.findIndex(p=>p.name===name);
+  if(idx===-1){ players.push({name,score:0,answers:[],finished:false}); idx=players.length-1; }
+  fn(players[idx]);
+  setPlayers(players);
+}
+
+function generatePin(){
+  return String(Math.floor(1000+Math.random()*9000));
+}
+
+// ══════════════════════════════════════════════════════════════════
+// SCREEN MANAGEMENT
+// ══════════════════════════════════════════════════════════════════
+const screens = ['screen-mode','screen-host-lobby','screen-host-question',
+                 'screen-host-leaderboard','screen-player-join',
+                 'screen-player-wait','screen-player-question','screen-player-done'];
+
+function showScreen(id){
+  screens.forEach(s=>document.getElementById(s).classList.add('hidden'));
+  document.getElementById(id).classList.remove('hidden');
+}
+
+// ══════════════════════════════════════════════════════════════════
+// QR CODE GENERATION
+// ══════════════════════════════════════════════════════════════════
+function generateQR(url){
+  const canvas = document.getElementById('qr-canvas');
+  document.getElementById('qr-url-display').textContent = 'rino640.github.io/Enoc-quiz';
+  
+  if(typeof QRCode !== 'undefined' && !window.QR_FALLBACK){
+    try{
+      // Clear and regenerate
+      canvas.getContext('2d').clearRect(0,0,canvas.width,canvas.height);
+      var qr = new QRCode(document.createElement('div'), {
+        text: url, width:180, height:180,
+        colorDark:'#0d1e35', colorLight:'#ffffff',
+        correctLevel: QRCode.CorrectLevel.M
+      });
+      // Draw the QRCode image to our canvas
+      setTimeout(()=>{
+        var img = qr._el.querySelector('img') || qr._el.querySelector('canvas');
+        if(img){
+          var ctx = canvas.getContext('2d');
+          ctx.fillStyle='#fff'; ctx.fillRect(0,0,180,180);
+          if(img.tagName==='IMG'){
+            var i=new Image(); i.onload=()=>ctx.drawImage(i,0,0,180,180); i.src=img.src;
+          } else {
+            ctx.drawImage(img,0,0,180,180);
+          }
+        }
+      },100);
+      return;
+    }catch(e){}
+  }
+  
+  // Fallback: draw manual QR-like pattern with URL text
+  drawFallbackQR(canvas, url);
+}
+
+function drawFallbackQR(canvas, url){
+  const ctx = canvas.getContext('2d');
+  const size = 180;
+  ctx.fillStyle = '#fff'; ctx.fillRect(0,0,size,size);
+  
+  // Draw a simple visual placeholder with the URL
+  ctx.fillStyle = '#0d1e35';
+  // Corner squares
+  [[4,4],[4,124],[124,4]].forEach(([x,y])=>{
+    ctx.fillRect(x,y,52,52);
+    ctx.fillStyle='#fff'; ctx.fillRect(x+8,y+8,36,36);
+    ctx.fillStyle='#0d1e35'; ctx.fillRect(x+16,y+16,20,20);
+    ctx.fillStyle='#0d1e35';
+  });
+  // Data area hint
+  ctx.fillStyle = '#0d1e35';
+  for(let r=0;r<8;r++) for(let c=0;c<8;c++){
+    if(Math.random()>.5) ctx.fillRect(64+c*12,4+r*12,10,10);
+    if(Math.random()>.5) ctx.fillRect(64+c*12,100+r*12,10,10);
+    if(Math.random()>.5) ctx.fillRect(4+c*12,64+r*12,10,10);
+  }
+  // URL text
+  ctx.fillStyle='#0d1e35'; ctx.font='bold 8px monospace'; ctx.textAlign='center';
+  ctx.fillText('SCAN TO JOIN',90,168);
+  ctx.font='6px monospace';
+  const shortUrl = url.replace('https://','').substring(0,28);
+  ctx.fillText(shortUrl,90,178);
+}
+
+// ══════════════════════════════════════════════════════════════════
+// HOST FLOW
+// ══════════════════════════════════════════════════════════════════
+let hostPollInterval = null;
+let hostTimerInterval = null;
+let hostCurrentQ = 0;
+let hostTimerVal = TIME_PER_Q;
+let hostAnswerCounts = [0,0,0,0];
+let hostRevealDone = false;
+
+function startHost(){
+  // Reset all state
+  const pin = generatePin();
+  setPin(pin);
+  setState({phase:'lobby', qIndex:0, qStart:0, pin});
+  setPlayers([]);
+  
+  showScreen('screen-host-lobby');
+  document.getElementById('pin-display').textContent = pin;
+  
+  // Build URL for QR
+  const url = 'https://rino640.github.io/Enoc-quiz/ENOC_Psychosocial_Quiz_2026_FINAL.html?mode=player';
+  generateQR(PERMANENT_URL);
+  
+  // Poll for new players
+  hostPollInterval = setInterval(updateHostLobby, 800);
+}
+
+function updateHostLobby(){
+  const players = getPlayers();
+  document.getElementById('player-count').textContent = players.length;
+  const list = document.getElementById('players-list');
+  // Only add new chips
+  const existing = new Set([...list.querySelectorAll('.player-chip')].map(c=>c.textContent));
+  players.forEach(p=>{
+    if(!existing.has(p.name)){
+      const chip = document.createElement('div');
+      chip.className='player-chip';
+      chip.textContent = p.name;
+      list.appendChild(chip);
+    }
+  });
+}
+
+function hostStartGame(){
+  clearInterval(hostPollInterval);
+  setState({phase:'question', qIndex:0, qStart:Date.now(), pin:getPin()});
+  hostCurrentQ = 0;
+  showHostQuestion();
+}
+
+function showHostQuestion(){
+  showScreen('screen-host-question');
+  hostRevealDone = false;
+  hostAnswerCounts = [0,0,0,0];
+  clearInterval(hostTimerInterval);
+  
+  const q = QUESTIONS[hostCurrentQ];
+  const qNum = hostCurrentQ+1;
+  
+  document.getElementById('hq-progress').textContent = `Question ${qNum} of ${QUESTIONS.length}`;
+  document.getElementById('hq-q-num').textContent = `QUESTION ${qNum}`;
+  document.getElementById('hq-q-text').textContent = q.q;
+  document.getElementById('btn-next-q').textContent = hostCurrentQ < QUESTIONS.length-1 ? 'Next →' : '🏆 Final Leaderboard';
+  document.getElementById('btn-lb-continue').textContent = hostCurrentQ < QUESTIONS.length-1 ? '▶ Next Question' : '🏆 Final Results';
+  
+  // Options
+  const optsEl = document.getElementById('hq-options');
+  optsEl.innerHTML = '';
+  const colors = ['A','B','C','D'];
+  q.opts.forEach((opt,i)=>{
+    const div = document.createElement('div');
+    div.className = `hq-option ${colors[i]}`;
+    div.id = `hq-opt-${i}`;
+    div.innerHTML = `<div class="opt-letter">${colors[i]}</div>${opt}`;
+    optsEl.appendChild(div);
+  });
+  
+  // Answer stats
+  const statsEl = document.getElementById('answer-stats');
+  statsEl.innerHTML = colors.map(c=>`
+    <div class="stat-bar ${c}">
+      <div class="stat-bar-fill" id="stat-${c}" style="height:8px;"></div>
+      <div class="stat-label">${c}</div>
+    </div>`).join('');
+  
+  document.getElementById('hq-answered-count').textContent = '';
+  
+  // Update game state
+  setState({phase:'question', qIndex:hostCurrentQ, qStart:Date.now(), pin:getPin()});
+  
+  // Timer
+  hostTimerVal = TIME_PER_Q;
+  updateHostTimerBar(TIME_PER_Q, TIME_PER_Q);
+  
+  hostTimerInterval = setInterval(()=>{
+    hostTimerVal--;
+    updateHostTimerBar(hostTimerVal, TIME_PER_Q);
+    updateAnswerStats();
+    if(hostTimerVal <= 0){
+      clearInterval(hostTimerInterval);
+      hostRevealAnswers();
+    }
+  }, 1000);
+  
+  // Also poll answer stats every 500ms
+  setTimeout(function pollStats(){
+    if(hostRevealDone) return;
+    updateAnswerStats();
+    setTimeout(pollStats, 500);
+  }, 500);
+}
+
+function updateHostTimerBar(val, max){
+  const pct = (val/max)*100;
+  const bar = document.getElementById('host-timer-bar');
+  if(bar){
+    bar.style.width = pct+'%';
+    bar.className = 'timer-bar'+(val<=5?' urgent':'');
+  }
+}
+
+function updateAnswerStats(){
+  const players = getPlayers();
+  const total = players.length || 1;
+  let counts = [0,0,0,0];
+  let answered = 0;
+  players.forEach(p=>{
+    const ans = p.answers[hostCurrentQ];
+    if(ans !== undefined && ans !== null){
+      counts[ans]++;
+      answered++;
+    }
+  });
+  hostAnswerCounts = counts;
+  
+  const colors = ['A','B','C','D'];
+  const maxCount = Math.max(...counts,1);
+  colors.forEach((c,i)=>{
+    const el = document.getElementById('stat-'+c);
+    if(el){
+      const h = 8 + (counts[i]/maxCount)*80;
+      el.style.height = h+'px';
+      el.textContent = counts[i]>0 ? counts[i] : '';
+    }
+  });
+  
+  document.getElementById('hq-answered-count').textContent =
+    `${answered}/${players.length} answered`;
+}
+
+function hostRevealAnswers(){
+  hostRevealDone = true;
+  const correct = QUESTIONS[hostCurrentQ].correct;
+  const colors = ['A','B','C','D'];
+  colors.forEach((c,i)=>{
+    const el = document.getElementById(`hq-opt-${i}`);
+    if(el){
+      if(i===correct) el.classList.add('correct');
+      else el.classList.add('wrong');
+    }
+  });
+  updateAnswerStats();
+}
+
+function hostNextQuestion(){
+  clearInterval(hostTimerInterval);
+  if(!hostRevealDone) hostRevealAnswers();
+  
+  // Show leaderboard between questions
+  showLeaderboard(true);
+}
+
+function showLeaderboard(midGame){
+  showScreen('screen-host-leaderboard');
+  setState({phase:'leaderboard', qIndex:hostCurrentQ, qStart:0, pin:getPin()});
+  
+  const isLast = hostCurrentQ >= QUESTIONS.length-1;
+  const isFinal = midGame && isLast;
+  
+  document.getElementById('lb-subtitle').textContent =
+    isFinal ? '🎉 Final Results!' : `After Question ${hostCurrentQ+1} of ${QUESTIONS.length}`;
+  
+  const btnContinue = document.getElementById('btn-lb-continue');
+  if(isFinal){
+    btnContinue.textContent = '🏆 Final Results';
+    btnContinue.onclick = ()=>showFinalLeaderboard();
+  } else {
+    btnContinue.textContent = '▶ Next Question';
+    btnContinue.onclick = ()=>{
+      hostCurrentQ++;
+      showHostQuestion();
+    };
+  }
+  
+  renderLeaderboard();
+  
+  // Live update
+  clearInterval(hostPollInterval);
+  hostPollInterval = setInterval(renderLeaderboard, 1000);
+}
+
+function showFinalLeaderboard(){
+  clearInterval(hostPollInterval);
+  setState({phase:'done', qIndex:hostCurrentQ, qStart:0, pin:getPin()});
+  document.getElementById('lb-subtitle').textContent = '🎉 Final Results — Quiz Complete!';
+  document.getElementById('btn-lb-continue').classList.add('hidden');
+  renderLeaderboard();
+}
+
+function renderLeaderboard(){
+  const players = getPlayers()
+    .filter(p=>p.name)
+    .sort((a,b)=>b.score-a.score);
+  
+  const medals = ['🥇','🥈','🥉'];
+  const list = document.getElementById('leaderboard-list');
+  list.innerHTML = '';
+  
+  players.forEach((p,i)=>{
+    const row = document.createElement('div');
+    row.className = `lb-row ${i<3?'rank-'+(i+1):''}`;
+    row.style.animationDelay = (i*0.06)+'s';
+    row.innerHTML = `
+      <div class="lb-rank">${i+1}</div>
+      <div class="lb-medal">${medals[i]||'👤'}</div>
+      <div class="lb-name">${escapeHtml(p.name)}</div>
+      <div style="text-align:right">
+        <div class="lb-score">${p.score}</div>
+        <div class="lb-max">/ 100 pts</div>
+      </div>`;
+    list.appendChild(row);
+  });
+  
+  if(players.length===0){
+    list.innerHTML='<div style="text-align:center;color:rgba(255,255,255,.4);padding:40px">No players yet…</div>';
+  }
+}
+
+// ══════════════════════════════════════════════════════════════════
+// PLAYER FLOW
+// ══════════════════════════════════════════════════════════════════
+let playerName = '';
+let playerScore = 0;
+let playerCurrentQ = -1;
+let playerTimerInterval = null;
+let playerTimerVal = TIME_PER_Q;
+let playerAnswered = false;
+let playerPollInterval = null;
+
+function startPlayer(){
+  showScreen('screen-player-join');
+  // Check URL param
+  const urlParams = new URLSearchParams(window.location.search);
+  // nothing needed — just show join screen
+}
+
+function joinGame(){
+  const input = document.getElementById('player-name-input');
+  const name = (input.value||'').trim();
+  if(!name){ input.style.borderColor='var(--red)'; input.focus(); return; }
+  
+  playerName = name;
+  playerScore = 0;
+  playerCurrentQ = -1;
+  
+  // Register player
+  updatePlayer(playerName, p=>{
+    p.score = 0;
+    p.answers = [];
+    p.finished = false;
+  });
+  
+  showScreen('screen-player-wait');
+  document.getElementById('wait-greeting').textContent = `Ready, ${playerName}! 🎯`;
+  
+  // Poll for game start
+  playerPollInterval = setInterval(checkForQuestion, 800);
+}
+
+function checkForQuestion(){
+  const state = getState();
+  if(!state) return;
+  
+  if(state.phase==='question'){
+    const qIdx = state.qIndex;
+    if(qIdx !== playerCurrentQ){
+      clearInterval(playerPollInterval);
+      playerCurrentQ = qIdx;
+      showPlayerQuestion(qIdx, state.qStart);
+    }
+  } else if(state.phase==='leaderboard' || state.phase==='done'){
+    // Check if we're between questions and need to wait for next
+    // Stay on wait screen if player already answered
+  }
+}
+
+function showPlayerQuestion(qIdx, qStart){
+  showScreen('screen-player-question');
+  playerAnswered = false;
+  clearInterval(playerTimerInterval);
+  
+  const q = QUESTIONS[qIdx];
+  const colors = ['A','B','C','D'];
+  
+  document.getElementById('pq-info').textContent = `Q ${qIdx+1}/${QUESTIONS.length}`;
+  document.getElementById('pq-qnum').textContent = `QUESTION ${qIdx+1} OF ${QUESTIONS.length}`;
+  document.getElementById('pq-question').textContent = q.q;
+  document.getElementById('pq-current-score').textContent = playerScore;
+  document.getElementById('pq-feedback').className = 'pq-feedback';
+  document.getElementById('pq-next-notice').textContent = '';
+  
+  // Options
+  const optsEl = document.getElementById('pq-options');
+  optsEl.innerHTML = '';
+  q.opts.forEach((opt,i)=>{
+    const btn = document.createElement('button');
+    btn.className = `pq-option ${colors[i]}`;
+    btn.id = `pq-opt-${i}`;
+    btn.innerHTML = `<div class="pq-opt-letter">${colors[i]}</div>${opt}`;
+    btn.onclick = ()=>playerSelectAnswer(i, qIdx);
+    optsEl.appendChild(btn);
+  });
+  
+  // Calculate remaining time
+  const elapsed = Math.floor((Date.now() - qStart)/1000);
+  playerTimerVal = Math.max(0, TIME_PER_Q - elapsed);
+  
+  updatePlayerTimerBar(playerTimerVal, TIME_PER_Q);
+  document.getElementById('pq-timer').textContent = playerTimerVal;
+  
+  playerTimerInterval = setInterval(()=>{
+    playerTimerVal--;
+    document.getElementById('pq-timer').textContent = Math.max(0,playerTimerVal);
+    updatePlayerTimerBar(playerTimerVal, TIME_PER_Q);
+    
+    const timerEl = document.getElementById('pq-timer');
+    if(playerTimerVal<=5){
+      timerEl.className='pq-timer urgent';
+    }
+    
+    if(playerTimerVal<=0){
+      clearInterval(playerTimerInterval);
+      if(!playerAnswered){
+        playerTimeOut(qIdx);
+      }
+    }
+    
+    // Check if host moved on
+    checkPlayerState();
+    
+  }, 1000);
+}
+
+function updatePlayerTimerBar(val,max){
+  const pct = Math.max(0,(val/max)*100);
+  const bar = document.getElementById('player-timer-bar');
+  if(bar){
+    bar.style.width = pct+'%';
+    bar.className = 'timer-bar'+(val<=5?' urgent':'');
+  }
+}
+
+function playerSelectAnswer(answerIdx, qIdx){
+  if(playerAnswered) return;
+  playerAnswered = true;
+  clearInterval(playerTimerInterval);
+  
+  const correct = QUESTIONS[qIdx].correct;
+  const isCorrect = answerIdx === correct;
+  const colors = ['A','B','C','D'];
+  
+  // Disable all buttons
+  document.querySelectorAll('.pq-option').forEach(b=>b.disabled=true);
+  
+  // Highlight selected
+  const selectedBtn = document.getElementById(`pq-opt-${answerIdx}`);
+  selectedBtn.classList.add(isCorrect?'selected-correct':'selected-wrong');
+  
+  // Reveal correct
+  if(!isCorrect){
+    document.getElementById(`pq-opt-${correct}`).classList.add('reveal-correct');
+  }
+  
+  // Score: 10 points base, +bonus for speed
+  let points = 0;
+  if(isCorrect){
+    const speedBonus = Math.floor((playerTimerVal/TIME_PER_Q)*2); // 0-2 bonus
+    points = 10 + speedBonus;
+    points = Math.min(points,12); // cap
+    // Normalise to exactly 10 per question at base
+    points = 10;
+    playerScore += 10;
+  }
+  
+  // Save answer
+  updatePlayer(playerName, p=>{
+    if(!p.answers) p.answers=[];
+    p.answers[qIdx] = answerIdx;
+    p.score = playerScore;
+  });
+  
+  // Feedback
+  const fbEl = document.getElementById('pq-feedback');
+  if(isCorrect){
+    fbEl.className='pq-feedback correct';
+    fbEl.innerHTML='✅ Correct! +10 points<br><small>'+QUESTIONS[qIdx].explain+'</small>';
+  } else {
+    fbEl.className='pq-feedback wrong';
+    fbEl.innerHTML='❌ Incorrect!<br><small>'+QUESTIONS[qIdx].explain+'</small>';
+  }
+  
+  document.getElementById('pq-current-score').textContent = playerScore;
+  document.getElementById('pq-next-notice').textContent = '⏳ Waiting for next question…';
+  
+  // Poll for next question
+  playerPollInterval = setInterval(checkPlayerState, 800);
+}
+
+function playerTimeOut(qIdx){
+  if(playerAnswered) return;
+  playerAnswered = true;
+  
+  // Save no-answer
+  updatePlayer(playerName, p=>{
+    if(!p.answers) p.answers=[];
+    p.answers[qIdx] = null;
+  });
+  
+  document.querySelectorAll('.pq-option').forEach(b=>b.disabled=true);
+  const correct = QUESTIONS[qIdx].correct;
+  document.getElementById(`pq-opt-${correct}`).classList.add('reveal-correct');
+  
+  const fbEl = document.getElementById('pq-feedback');
+  fbEl.className='pq-feedback wrong';
+  fbEl.innerHTML='⏱️ Time\'s up!<br><small>'+QUESTIONS[qIdx].explain+'</small>';
+  document.getElementById('pq-next-notice').textContent = '⏳ Waiting for next question…';
+  
+  playerPollInterval = setInterval(checkPlayerState, 800);
+}
+
+function checkPlayerState(){
+  const state = getState();
+  if(!state) return;
+  
+  if(state.phase==='question' && state.qIndex !== playerCurrentQ){
+    clearInterval(playerPollInterval);
+    playerCurrentQ = state.qIndex;
+    playerAnswered = false;
+    showPlayerQuestion(state.qIndex, state.qStart);
+    return;
+  }
+  
+  if(state.phase==='done'){
+    clearInterval(playerPollInterval);
+    showPlayerDone();
+    return;
+  }
+  
+  if(state.phase==='leaderboard' && playerAnswered){
+    // Wait for next question or done
+    const nextQ = state.qIndex+1;
+    if(nextQ >= QUESTIONS.length && state.phase==='done'){
+      clearInterval(playerPollInterval);
+      showPlayerDone();
+    }
+  }
+}
+
+function showPlayerDone(){
+  clearInterval(playerPollInterval);
+  clearInterval(playerTimerInterval);
+  showScreen('screen-player-done');
+  
+  // Update final score
+  const players = getPlayers();
+  const me = players.find(p=>p.name===playerName);
+  const finalScore = me ? me.score : playerScore;
+  
+  // Rank
+  const sorted = players.sort((a,b)=>b.score-a.score);
+  const rank = sorted.findIndex(p=>p.name===playerName)+1;
+  const total = sorted.length;
+  
+  document.getElementById('done-player-name').textContent = playerName;
+  document.getElementById('done-score').innerHTML = `${finalScore}<span>/100</span>`;
+  document.getElementById('done-rank').textContent = `You ranked #${rank} out of ${total} players`;
+  
+  // Trophy and message
+  let trophy='🎯', msg='';
+  if(finalScore===100){
+    trophy='🏆'; msg='Perfect score! Psychosocial Safety Expert! Outstanding performance!';
+  } else if(finalScore>=80){
+    trophy='🌟'; msg='Excellent! You have a strong understanding of psychosocial safety.';
+  } else if(finalScore>=60){
+    trophy='👍'; msg='Good effort! Keep learning about psychosocial safety in the workplace.';
+  } else if(finalScore>=40){
+    trophy='📚'; msg='Keep it up! Review today\'s presentation to strengthen your knowledge.';
+  } else {
+    trophy='💪'; msg='Thank you for participating! Psychosocial safety matters — keep learning!';
+  }
+  
+  document.getElementById('done-trophy').textContent = trophy;
+  document.getElementById('done-msg').textContent = msg;
+}
+
+// ══════════════════════════════════════════════════════════════════
+// URL PARAMETER AUTO-DETECTION
+// ══════════════════════════════════════════════════════════════════
+function escapeHtml(t){
+  return t.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+}
+
+// Auto-start player mode if URL has ?mode=player
+window.addEventListener('load',()=>{
+  const params = new URLSearchParams(window.location.search);
+  if(params.get('mode')==='player'){
+    startPlayer();
+  }
+  
+  // Check if there's an existing game state to resume
+  const state = getState();
+  if(state && state.phase==='done'){
+    // Old game — clear it
+    localStorage.removeItem(STORE_STATE);
+    localStorage.removeItem(STORE_PLAYERS);
+  }
+});
+
+// Storage event — sync across tabs/windows on same device
+window.addEventListener('storage', e=>{
+  if(e.key===STORE_STATE){
+    // Only relevant for player tabs
+    const state = getState();
+    if(state && state.phase==='question' && playerName){
+      checkPlayerState();
+    }
+  }
+});
+</script>
+
+</body>
+</html>
